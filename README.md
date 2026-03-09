@@ -158,10 +158,10 @@ The skills in this repo are plain Markdown files with YAML frontmatter. They wor
 | Skill | Description |
 |-------|-------------|
 | [`/create-pipeline`](skills/create-pipeline/SKILL.md) | Generate v0 Pipeline YAML (CI, CD, approvals, matrix strategies) |
-| [`/create-pipeline-v1`](skills/create-pipeline-v1/SKILL.md) | Generate v1 simplified Pipeline YAML |
+| [`/create-pipeline-v1`](skills/create-pipeline-v1/SKILL.md) | Generate v1 simplified Pipeline YAML -- **Alpha: internal testing only** |
 | [`/create-template`](skills/create-template/SKILL.md) | Create reusable Step, Stage, Pipeline, or StepGroup templates |
 | [`/create-trigger`](skills/create-trigger/SKILL.md) | Create webhook, scheduled, and artifact triggers |
-| [`/create-agent-template`](skills/create-agent-template/SKILL.md) | Create AI-powered agent templates |
+| [`/create-agent-template`](skills/create-agent-template/SKILL.md) | Create AI-powered agent templates -- **Alpha: internal testing only** |
 
 ### Resource Management
 
