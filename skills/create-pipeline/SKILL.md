@@ -21,9 +21,17 @@ Generate Harness v0 Pipeline YAML and optionally push to Harness via MCP.
 
 ## Instructions
 
-1. **Clarify requirements** - pipeline type (CI, CD, or both), language/framework, deployment target, cloud provider, special steps (testing, scanning, approvals)
-2. **Generate valid YAML** following the structure below
-3. **Optionally create via MCP** using `harness_create` with resource_type `pipeline`
+1. **Analyze codebase** (if source code is available) - Scan the project to auto-detect language, build tools, test frameworks, containerization, deployment manifests, and target infrastructure. Use the detection tables and decision tree in `references/codebase-analysis.md` to determine:
+   - Language and runtime version (package.json → Node.js, go.mod → Go, pom.xml → Java, etc.)
+   - Build commands and base images
+   - Test framework and report format (Jest → JUnit, pytest → JUnit XML, etc.)
+   - Linter and formatter (ESLint, Prettier, Ruff, etc.)
+   - Dockerfile presence and registry type (Docker Hub, ECR, GCR, ACR)
+   - Deployment manifests → Harness service/deployment type (k8s manifests → Kubernetes, Chart.yaml → NativeHelm, task-definition.json → ECS, serverless.yml → ServerlessAwsLambda)
+   - Existing CI/CD configs for migration (GitHub Actions, Jenkins, GitLab CI, etc.)
+2. **Clarify requirements** - Confirm detected settings with the user. Ask about anything that couldn't be auto-detected: deployment target, cloud provider, approval gates, notification channels.
+3. **Generate valid YAML** following the structure below, using the detected build/test/deploy commands
+4. **Optionally create via MCP** using `harness_create` with resource_type `pipeline`
 
 ## Pipeline Structure
 

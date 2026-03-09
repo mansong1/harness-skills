@@ -18,6 +18,27 @@ compatibility: Requires Harness MCP v2 server (harness-mcp-v2)
 
 Generate Harness Service YAML and push to Harness via MCP.
 
+## Instructions
+
+1. **Detect service type from codebase** (if source code is available) - Scan the project for deployment manifests to auto-select the correct `serviceDefinition.type` and manifest configuration:
+   - `k8s/`, `kubernetes/`, `manifests/` with YAML files → `Kubernetes` with `K8sManifest`
+   - `kustomization.yaml` → `Kubernetes` with `Kustomize`
+   - `Chart.yaml`, `charts/`, `helm/` → `NativeHelm` with `HelmChart`
+   - `task-definition.json` → `ECS` with `EcsTaskDefinition`
+   - `serverless.yml` / `template.yaml` (SAM) → `ServerlessAwsLambda`
+   - `function.json` (Azure) → `AzureWebApp`
+   - `.NET` + Windows → `WinRm`
+   - Traditional app (JAR/WAR) without containers → `Ssh`
+   - See `create-pipeline/references/codebase-analysis.md` Step 4 for the full decision tree
+2. **Detect artifact source** - Match Dockerfile registry references to artifact source type:
+   - Docker Hub → `DockerRegistry`
+   - `*.dkr.ecr.*.amazonaws.com` → `Ecr`
+   - `gcr.io` / `*-docker.pkg.dev` → `Gcr`
+   - `*.azurecr.io` → `Acr`
+3. **Confirm with user** - Present detected service type, manifest type, and artifact source for confirmation
+4. **Generate YAML** following the structure below
+5. **Create via MCP** using `harness_create` with resource_type `service`
+
 ## Service Structure
 
 ```yaml
