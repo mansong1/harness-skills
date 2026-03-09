@@ -62,11 +62,58 @@ Skills live in `skills/<skill-name>/SKILL.md`. Each skill folder may contain `re
 | `/manage-roles` | RBAC roles, assignments, permissions, and resource groups |
 | `/template-usage` | Template dependency tracking, impact analysis, and adoption |
 
+### Deployment Operations
+
+| Skill | Description |
+|-------|-------------|
+| `/create-freeze` | Create deployment freeze windows (maintenance, holidays, compliance) |
+| `/webhook-manager` | Manage GitX webhooks for Git-to-Harness entity sync |
+
 ### Agents
 
 | Skill | Description |
 |-------|-------------|
 | `/create-agent-template` | Generate AI agent templates (metadata.json, pipeline.yaml, wiki.MD) |
+
+## Cross-Skill Workflows
+
+When users need end-to-end setup, follow these dependency chains. Each step depends on the previous -- do not skip steps or create resources that reference connectors/secrets that don't exist yet.
+
+### New Microservice Setup
+
+Use when a user wants to deploy a new service to Harness. Follow this exact order:
+
+1. **Create connectors** (`/create-connector`) -- GitHub connector for source code and manifests, Docker/ECR/GCR connector for container images, K8s/cloud connector for target infrastructure
+2. **Create secrets** (`/create-secret`) -- Authentication tokens, SSH keys, or credentials referenced by connectors
+3. **Create service** (`/create-service`) -- Reference the Git connector for manifests, reference the Docker connector for artifact source
+4. **Create environment** (`/create-environment`) -- PreProduction and/or Production with environment-specific variables
+5. **Create infrastructure** (`/create-infrastructure`) -- Reference the K8s/cloud connector for the target cluster. If no connector exists for the target, create one first
+6. **Create pipeline** (`/create-pipeline`) -- Build pipeline based on source code language and manifest type. Reference the service, environment, and infrastructure from previous steps
+7. **Create trigger** (`/create-trigger`) -- Automate the pipeline with webhook (PR/push) or artifact triggers
+
+### New Project Onboarding
+
+Use when a user is setting up a brand new Harness project from scratch:
+
+1. **Create project** -- Use `harness_create` with `resource_type: "project"` and the target `org_id`
+2. **Create connectors** (`/create-connector`) -- All connectors needed for the project (Git, cloud, registry, cluster)
+3. **Create secrets** (`/create-secret`) -- All secret references for connector auth
+4. **Create service** (`/create-service`) -- Service definitions for each microservice
+5. **Create environment** (`/create-environment`) -- Dev, staging, production environments
+6. **Create infrastructure** (`/create-infrastructure`) -- Infrastructure definitions per environment
+7. **Create pipeline** (`/create-pipeline`) -- CI/CD pipelines for each service
+8. **Create trigger** (`/create-trigger`) -- Automate all pipelines
+
+**Key rule:** Always check if a referenced resource (connector, secret, environment) exists before creating something that depends on it. If it doesn't exist, create it first. Ask the user for the org and project context before starting.
+
+## Scope & Context Convention
+
+Before making any MCP API call that creates or modifies resources, always establish the user's scope:
+
+1. **Ask for org and project** if not already known. Most Harness resources are scoped to an org + project.
+2. **Use `harness_list`** to verify referenced resources exist before creating dependents (e.g., confirm a connector exists before referencing it in a service).
+3. **Account-level resources** (no org/project) are visible to all orgs and projects. Org-level resources are visible to all projects in that org. Project-level resources are only visible within that project.
+4. **If the user provides a Harness UI URL**, extract `org_id`, `project_id`, and `resource_id` from it -- MCP tools support URL auto-extraction.
 
 ## Schema References
 

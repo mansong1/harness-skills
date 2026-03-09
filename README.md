@@ -95,7 +95,9 @@ harness-skills/
 │   │   └── SKILL.md
 │   ├── debug-pipeline/
 │   │   └── SKILL.md
-│   └── ...                  # 23 skills total
+│   └── ...                  # 25 skills total
+├── scripts/
+│   └── validate-skills.sh   # Frontmatter validation
 ├── examples/
 │   ├── v0/                  # v0 pipeline examples
 │   ├── v1/                  # v1 pipeline examples
