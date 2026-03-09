@@ -121,6 +121,48 @@ Using the instructions in harness-skills/skills/debug-pipeline/SKILL.md,
 diagnose why my deploy pipeline failed
 ```
 
+### GitHub Copilot
+
+1. Clone the repo into your project:
+
+```bash
+git clone https://github.com/harness/harness-skills.git
+```
+
+2. Add skills as Copilot custom instructions. Copy `CLAUDE.md` to your repo's `.github/copilot-instructions.md`:
+
+```bash
+cp harness-skills/CLAUDE.md .github/copilot-instructions.md
+```
+
+Copilot automatically reads this file as project-level context in both GitHub.com and VS Code.
+
+3. For VS Code, configure the Harness MCP server in your workspace settings (`.vscode/mcp.json`):
+
+```json
+{
+  "servers": {
+    "harness-mcp-v2": {
+      "command": "npx",
+      "args": ["-y", "harness-mcp-v2"],
+      "env": {
+        "HARNESS_ACCOUNT_ID": "<your-account-id>",
+        "HARNESS_API_KEY": "<your-api-key>"
+      }
+    }
+  }
+}
+```
+
+4. Reference skill files in Copilot Chat using `#file`:
+
+```
+#file:harness-skills/skills/create-pipeline/SKILL.md
+Create a CI pipeline for my Python service
+```
+
+5. For GitHub Copilot on GitHub.com, attach skill files as context in Copilot Chat or add them as knowledge base references in your Copilot organization settings.
+
 ### Windsurf / Other AI Editors
 
 The skills in this repo are plain Markdown files with YAML frontmatter. They work with any AI coding tool that supports:
