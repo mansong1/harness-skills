@@ -1,14 +1,15 @@
 ---
 name: debug-pipeline
 description: >-
-  Diagnose Harness pipeline execution failures and suggest fixes via MCP tools. Analyzes execution logs,
-  identifies root causes across build failures, infrastructure errors, configuration issues, deployment
-  problems, and timeouts. Use when asked to debug a pipeline, investigate a failure, find out why a build
-  failed, analyze pipeline errors, or check execution logs. Trigger phrases: debug pipeline, pipeline
-  failed, why did my build fail, analyze failure, pipeline error, execution logs, fix pipeline.
+  Diagnose Harness pipeline executions via MCP. Analyzes any execution (failed or successful) to produce
+  structured reports with stage/step breakdown, timing, bottlenecks, failure details, chained pipeline
+  drill-down, and execution logs. Use when asked to debug a pipeline, investigate a failure, find out
+  why a build failed, analyze pipeline errors, check execution logs, review execution performance, or
+  find bottlenecks. Trigger phrases: debug pipeline, pipeline failed, why did my build fail, analyze
+  failure, pipeline error, execution logs, fix pipeline, execution bottleneck, slow pipeline.
 metadata:
   author: Harness
-  version: 2.0.0
+  version: 2.1.0
   mcp-server: harness-mcp-v2
 license: Apache-2.0
 compatibility: Requires Harness MCP v2 server (harness-mcp-v2)
@@ -16,23 +17,53 @@ compatibility: Requires Harness MCP v2 server (harness-mcp-v2)
 
 # Debug Pipeline
 
-Diagnose pipeline execution failures and suggest fixes via MCP.
+Diagnose pipeline executions and suggest fixes via MCP.
 
 ## Instructions
 
-### Step 1: Quick Diagnosis (Preferred)
+### Step 1: Diagnose Execution (Preferred)
 
-Use the dedicated diagnosis tool first:
+Use the dedicated diagnosis tool. It accepts an execution_id, pipeline_id (auto-fetches latest execution), or a Harness URL:
 
 ```
 Call MCP tool: harness_diagnose
 Parameters:
   pipeline_id: "<pipeline_identifier>"   # or execution_id or url
-  include_logs: true
+  org_id: "<organization>"
   project_id: "<project>"
 ```
 
-This retrieves execution details, logs, stage/step breakdowns, and failure details in one call.
+This returns a structured report with stage/step breakdown, timing, bottlenecks, and failure details in one call. It also automatically follows chained (child) pipeline failures.
+
+### Step 1b: Full Diagnostic Mode
+
+For deeper analysis, request logs and pipeline YAML:
+
+```
+Call MCP tool: harness_diagnose
+Parameters:
+  execution_id: "<execution_id>"
+  org_id: "<organization>"
+  project_id: "<project>"
+  summary: false               # raw diagnostic payload
+  include_yaml: true           # include pipeline definition
+  include_logs: true           # include failed step logs
+  log_snippet_lines: 120       # tail N lines per step (0 = unlimited)
+  max_failed_steps: 5          # cap number of steps to fetch logs for
+```
+
+### Diagnose Parameters
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `execution_id` | -- | Specific execution to analyze |
+| `pipeline_id` | -- | Fetch latest execution for this pipeline |
+| `url` | -- | Harness UI URL (auto-extracts IDs) |
+| `summary` | true | Structured report (true) or raw payload (false) |
+| `include_yaml` | false (summary) / true (raw) | Include pipeline YAML definition |
+| `include_logs` | false (summary) / true (raw) | Include failed step logs |
+| `log_snippet_lines` | 120 | Max log lines per step (tail). 0 = unlimited |
+| `max_failed_steps` | 5 | Max steps to fetch logs for. 0 = unlimited |
 
 ### Step 2: Project Health Overview
 
@@ -150,6 +181,8 @@ Categorize errors and provide targeted fixes:
 - "Debug execution abc123" - Use `harness_diagnose` with execution_id
 - "Show me recent failures" - Use `harness_status` then drill into failures
 - "Analyze the pipeline at https://app.harness.io/..." - Pass URL directly to `harness_diagnose`
+- "Which stage is the bottleneck in my pipeline?" - Use `harness_diagnose` on a successful execution
+- "Get full logs for the failed deploy step" - Use `harness_diagnose` with `include_logs: true`
 
 ## Performance Notes
 
