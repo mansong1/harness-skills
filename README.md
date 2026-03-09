@@ -173,8 +173,6 @@ The skills in this repo are plain Markdown files with YAML frontmatter. They wor
 | [`/create-connector`](skills/create-connector/SKILL.md) | Create connectors (Git, cloud, registries, clusters) |
 | [`/create-secret`](skills/create-secret/SKILL.md) | Create secrets (text, file, SSH, WinRM) |
 | [`/create-input-set`](skills/create-input-set/SKILL.md) | Create reusable input sets and overlays |
-| [`/create-freeze`](skills/create-freeze/SKILL.md) | Create deployment freeze windows |
-| [`/webhook-manager`](skills/webhook-manager/SKILL.md) | Manage GitX webhooks |
 
 ### Access Control & Feature Flags (MCP)
 
@@ -219,7 +217,7 @@ harness-skills/
 │   │   └── SKILL.md
 │   ├── debug-pipeline/
 │   │   └── SKILL.md
-│   └── ...                  # 29 skills total
+│   └── ...                  # 27 skills total
 ├── scripts/
 │   └── validate-skills.sh   # Frontmatter validation
 ├── examples/

@@ -66,8 +66,6 @@ Skills live in `skills/<skill-name>/SKILL.md`. Each skill folder may contain `re
 | Skill | Description |
 |-------|-------------|
 | `/manage-delegates` | Monitor delegate health and manage registration tokens |
-| `/create-freeze` | Create deployment freeze windows (maintenance, holidays, compliance) |
-| `/webhook-manager` | Manage GitX webhooks for Git-to-Harness entity sync |
 
 ### Observability & Governance
 
