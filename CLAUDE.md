@@ -48,6 +48,27 @@ Skills live in `skills/<skill-name>/SKILL.md`. Each skill folder may contain `re
 | `/create-connector` | Create connectors (GitHub, AWS, GCP, Azure, Docker, K8s) |
 | `/create-secret` | Manage secrets (SecretText, SecretFile, SSHKey, WinRM) |
 
+### Access Control & Users
+
+| Skill | Description |
+|-------|-------------|
+| `/manage-users` | Manage users, user groups, and service accounts |
+| `/manage-roles` | RBAC roles, assignments, permissions, and resource groups |
+
+### Feature Flags
+
+| Skill | Description |
+|-------|-------------|
+| `/manage-feature-flags` | Create, list, toggle, and delete feature flags |
+
+### Platform Operations
+
+| Skill | Description |
+|-------|-------------|
+| `/manage-delegates` | Monitor delegate health and manage registration tokens |
+| `/create-freeze` | Create deployment freeze windows (maintenance, holidays, compliance) |
+| `/webhook-manager` | Manage GitX webhooks for Git-to-Harness entity sync |
+
 ### Observability & Governance
 
 | Skill | Description |
@@ -59,15 +80,8 @@ Skills live in `skills/<skill-name>/SKILL.md`. Each skill folder may contain `re
 | `/chaos-experiment` | Create and run chaos engineering experiments |
 | `/scorecard-review` | IDP scorecards and service maturity review |
 | `/audit-report` | Audit trails and compliance evidence (SOC2, GDPR, HIPAA) |
-| `/manage-roles` | RBAC roles, assignments, permissions, and resource groups |
 | `/template-usage` | Template dependency tracking, impact analysis, and adoption |
-
-### Deployment Operations
-
-| Skill | Description |
-|-------|-------------|
-| `/create-freeze` | Create deployment freeze windows (maintenance, holidays, compliance) |
-| `/webhook-manager` | Manage GitX webhooks for Git-to-Harness entity sync |
+| `/create-policy` | Create OPA governance policies for supply chain security |
 
 ### Agents
 

@@ -39,8 +39,15 @@ Skills are automatically available when Claude Code runs in this directory.
 | [`/create-secret`](skills/create-secret/SKILL.md) | Create secrets (text, file, SSH, WinRM) |
 | [`/create-input-set`](skills/create-input-set/SKILL.md) | Create reusable input sets and overlays |
 | [`/create-freeze`](skills/create-freeze/SKILL.md) | Create deployment freeze windows |
-| [`/manage-roles`](skills/manage-roles/SKILL.md) | Manage role assignments and RBAC |
 | [`/webhook-manager`](skills/webhook-manager/SKILL.md) | Manage GitX webhooks |
+
+### Access Control & Feature Flags (MCP)
+
+| Skill | Description |
+|-------|-------------|
+| [`/manage-users`](skills/manage-users/SKILL.md) | Manage users, user groups, and service accounts |
+| [`/manage-roles`](skills/manage-roles/SKILL.md) | Manage role assignments and RBAC |
+| [`/manage-feature-flags`](skills/manage-feature-flags/SKILL.md) | Create, list, toggle, and delete feature flags |
 
 ### Operations & Debugging (MCP)
 
@@ -50,6 +57,7 @@ Skills are automatically available when Claude Code runs in this directory.
 | [`/debug-pipeline`](skills/debug-pipeline/SKILL.md) | Analyze execution failures, diagnose root causes |
 | [`/migrate-pipeline`](skills/migrate-pipeline/SKILL.md) | Convert pipelines from v0 to v1 format |
 | [`/template-usage`](skills/template-usage/SKILL.md) | Track template dependencies and adoption |
+| [`/manage-delegates`](skills/manage-delegates/SKILL.md) | Monitor delegate health and manage tokens |
 
 ### Platform Intelligence (MCP)
 
@@ -62,6 +70,7 @@ Skills are automatically available when Claude Code runs in this directory.
 | [`/chaos-experiment`](skills/chaos-experiment/SKILL.md) | Create and run chaos experiments |
 | [`/scorecard-review`](skills/scorecard-review/SKILL.md) | Service maturity scorecards (IDP) |
 | [`/audit-report`](skills/audit-report/SKILL.md) | Audit trails and compliance reports |
+| [`/create-policy`](skills/create-policy/SKILL.md) | Create OPA governance policies for supply chain security |
 
 ## Usage
 
@@ -95,7 +104,7 @@ harness-skills/
 │   │   └── SKILL.md
 │   ├── debug-pipeline/
 │   │   └── SKILL.md
-│   └── ...                  # 25 skills total
+│   └── ...                  # 29 skills total
 ├── scripts/
 │   └── validate-skills.sh   # Frontmatter validation
 ├── examples/
