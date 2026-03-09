@@ -48,7 +48,7 @@ service:
   orgIdentifier: default
   projectIdentifier: my_project
   serviceDefinition:
-    type: Kubernetes        # Kubernetes, NativeHelm, ECS, ServerlessAwsLambda, Ssh, WinRm, AzureWebApp
+    type: Kubernetes        # Kubernetes, NativeHelm, ECS, ServerlessAwsLambda, Ssh, WinRm, AzureWebApp, AzureFunction, CustomDeployment
     spec:
       artifacts:
         primary:
@@ -138,6 +138,36 @@ serviceDefinition:
             helmVersion: V3
 ```
 
+### Kustomize Service
+```yaml
+serviceDefinition:
+  type: Kubernetes
+  spec:
+    artifacts:
+      primary:
+        primaryArtifactRef: main_image
+        sources:
+          - identifier: main_image
+            type: DockerRegistry
+            spec:
+              connectorRef: dockerhub
+              imagePath: myorg/api
+              tag: <+input>
+    manifests:
+      - manifest:
+          identifier: kustomize
+          type: Kustomize
+          spec:
+            store:
+              type: Github
+              spec:
+                connectorRef: github
+                repoName: k8s-config
+                branch: main
+                folderPath: overlays/production
+            pluginPath: ""
+```
+
 ### ECS Service
 ```yaml
 serviceDefinition:
@@ -168,14 +198,49 @@ serviceDefinition:
                 paths: [task-definition.json]
 ```
 
+### Serverless Lambda Service
+```yaml
+serviceDefinition:
+  type: ServerlessAwsLambda
+  spec:
+    artifacts:
+      primary:
+        primaryArtifactRef: s3_artifact
+        sources:
+          - identifier: s3_artifact
+            type: AmazonS3
+            spec:
+              connectorRef: aws_connector
+              region: us-east-1
+              bucketName: my-deployments
+              filePath: serverless-app.zip
+    manifests:
+      - manifest:
+          identifier: serverless_manifest
+          type: ServerlessAwsLambda
+          spec:
+            store:
+              type: Github
+              spec:
+                connectorRef: github
+                repoName: serverless-config
+                branch: main
+                paths: [serverless.yml]
+```
+
 ## Artifact Source Types
 
 - `DockerRegistry` - Docker Hub (connectorRef, imagePath, tag)
 - `Ecr` - AWS ECR (connectorRef, region, imagePath, tag)
 - `Gcr` - Google GCR (connectorRef, registryHostname, imagePath, tag)
+- `GoogleArtifactRegistry` - Google Artifact Registry (connectorRef, region, repositoryName, package, version)
 - `Acr` - Azure ACR (connectorRef, subscriptionId, registry, repository, tag)
-- `Nexus3Registry` - Nexus (connectorRef, repository, artifactPath, tag)
+- `ArtifactoryRegistry` - JFrog Artifactory (connectorRef, repository, artifactPath, repositoryFormat, tag)
+- `Nexus3Registry` - Nexus (connectorRef, repository, artifactPath, repositoryFormat, tag)
+- `GithubPackageRegistry` - GitHub Packages (connectorRef, packageType, org, packageName, version)
 - `AmazonS3` - S3 (connectorRef, region, bucketName, filePath)
+- `GoogleCloudStorage` - GCS (connectorRef, project, bucket, artifactPath)
+- `CustomArtifact` - Custom source (scripts, delegateSelectors, version)
 
 ## Creating via MCP
 

@@ -91,10 +91,11 @@ connector:
   type: Aws
   spec:
     credential:
-      type: ManualConfig          # ManualConfig, InheritFromDelegate, Irsa
+      type: ManualConfig          # ManualConfig, InheritFromDelegate, Irsa, OidcAuthentication
       spec:
         accessKeyRef: aws_access_key
         secretKeyRef: aws_secret_key
+    delegateSelectors: []         # Optional: target specific delegates
     executeOnDelegate: false
 ```
 
@@ -106,7 +107,7 @@ connector:
   type: Gcp
   spec:
     credential:
-      type: ManualConfig          # ManualConfig, InheritFromDelegate
+      type: ManualConfig          # ManualConfig, InheritFromDelegate, OidcAuthentication
       spec:
         secretKeyRef: gcp_service_account_key
     executeOnDelegate: false
@@ -183,6 +184,105 @@ connector:
             caCertRef: k8s_ca_cert
 ```
 
+## Helm Repository Connector
+
+### HTTP Helm Repo
+```yaml
+connector:
+  name: Helm Repo
+  identifier: helm_repo
+  type: HttpHelmRepo
+  spec:
+    helmRepoUrl: https://charts.example.com
+    auth:
+      type: UsernamePassword      # UsernamePassword or Anonymous
+      spec:
+        username: myuser
+        passwordRef: helm_password
+    delegateSelectors: []
+```
+
+### OCI Helm Repo
+```yaml
+connector:
+  name: OCI Helm
+  identifier: oci_helm
+  type: OciHelmRepo
+  spec:
+    helmRepoUrl: oci://registry.example.com/charts
+    auth:
+      type: UsernamePassword
+      spec:
+        username: myuser
+        passwordRef: oci_password
+```
+
+## Artifact Repository Connectors
+
+### Nexus
+```yaml
+connector:
+  name: Nexus
+  identifier: nexus_connector
+  type: Nexus
+  spec:
+    nexusServerUrl: https://nexus.example.com
+    version: "3.x"               # "2.x" or "3.x"
+    auth:
+      type: UsernamePassword
+      spec:
+        username: admin
+        passwordRef: nexus_password
+```
+
+### Artifactory
+```yaml
+connector:
+  name: Artifactory
+  identifier: artifactory_connector
+  type: Artifactory
+  spec:
+    artifactoryServerUrl: https://artifactory.example.com
+    auth:
+      type: UsernamePassword
+      spec:
+        username: admin
+        passwordRef: artifactory_password
+```
+
+## Ticketing Connectors
+
+### Jira
+```yaml
+connector:
+  name: Jira
+  identifier: jira_connector
+  type: Jira
+  spec:
+    jiraUrl: https://mycompany.atlassian.net
+    auth:
+      type: UsernamePassword
+      spec:
+        username: user@company.com
+        passwordRef: jira_api_token
+```
+
+### ServiceNow
+```yaml
+connector:
+  name: ServiceNow
+  identifier: servicenow_connector
+  type: ServiceNow
+  spec:
+    serviceNowUrl: https://mycompany.service-now.com
+    auth:
+      type: UsernamePassword
+      spec:
+        username: admin
+        usernameRef: snow_username
+        passwordRef: snow_password
+```
+
 ## Creating and Testing via MCP
 
 Create connector:
@@ -219,6 +319,9 @@ Parameters:
 - "Set up AWS connector" - Aws type with access key credentials
 - "Create Docker Hub connector" - DockerRegistry type
 - "Connect to my K8s cluster" - K8sCluster with service account
+- "Create a Helm repo connector" - HttpHelmRepo type for chart repositories
+- "Set up Jira connector" - Jira type for approval and ticketing integration
+- "Create Nexus connector" - Nexus type for artifact repository
 
 ## Performance Notes
 
@@ -237,3 +340,8 @@ Parameters:
 - Secrets must exist before creating the connector
 - Use format: `account.secret_name` for account-level secrets
 - Use just `secret_name` for project-level secrets
+
+### Delegate Selectors
+- Use `delegateSelectors` to target connectors at specific delegates
+- Required when the service is only reachable from specific network locations
+- Match delegate tags exactly (case-sensitive)

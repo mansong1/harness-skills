@@ -30,11 +30,13 @@ infrastructureDefinition:
   orgIdentifier: default
   projectIdentifier: my_project
   environmentRef: prod
+  deploymentType: Kubernetes
   type: KubernetesDirect
   spec:
     connectorRef: k8s_connector
     namespace: my-app-prod
     releaseName: release-<+INFRA_KEY_SHORT_ID>
+  allowSimultaneousDeployments: false
 ```
 
 ### KubernetesGcp (GKE)
@@ -43,6 +45,7 @@ infrastructureDefinition:
   name: GKE Cluster
   identifier: gke_prod
   environmentRef: prod
+  deploymentType: Kubernetes
   type: KubernetesGcp
   spec:
     connectorRef: gcp_connector
@@ -57,6 +60,7 @@ infrastructureDefinition:
   name: AKS Cluster
   identifier: aks_prod
   environmentRef: prod
+  deploymentType: Kubernetes
   type: KubernetesAzure
   spec:
     connectorRef: azure_connector
@@ -73,6 +77,7 @@ infrastructureDefinition:
   name: ECS Fargate
   identifier: ecs_prod
   environmentRef: prod
+  deploymentType: ECS
   type: ECS
   spec:
     connectorRef: aws_connector
@@ -86,11 +91,68 @@ infrastructureDefinition:
   name: Lambda
   identifier: lambda_prod
   environmentRef: prod
+  deploymentType: ServerlessAwsLambda
   type: ServerlessAwsLambda
   spec:
     connectorRef: aws_connector
     region: us-east-1
     stage: prod
+```
+
+### AzureWebApp
+```yaml
+infrastructureDefinition:
+  name: Azure Web App
+  identifier: azure_webapp_prod
+  environmentRef: prod
+  deploymentType: AzureWebApp
+  type: AzureWebApp
+  spec:
+    connectorRef: azure_connector
+    subscriptionId: <subscription_id>
+    resourceGroup: my-rg
+```
+
+### Asg (Auto Scaling Group)
+```yaml
+infrastructureDefinition:
+  name: ASG Production
+  identifier: asg_prod
+  environmentRef: prod
+  deploymentType: Asg
+  type: Asg
+  spec:
+    connectorRef: aws_connector
+    region: us-east-1
+```
+
+### GoogleCloudFunctions
+```yaml
+infrastructureDefinition:
+  name: Cloud Functions
+  identifier: gcf_prod
+  environmentRef: prod
+  deploymentType: GoogleCloudFunctions
+  type: GoogleCloudFunctions
+  spec:
+    connectorRef: gcp_connector
+    region: us-central1
+    project: my-gcp-project
+```
+
+### Pdc (Physical Data Center)
+```yaml
+infrastructureDefinition:
+  name: On-Prem Servers
+  identifier: pdc_prod
+  environmentRef: prod
+  deploymentType: Ssh
+  type: Pdc
+  spec:
+    connectorRef: pdc_connector
+    hosts:
+      - host1.example.com
+      - host2.example.com
 ```
 
 ## Creating via MCP
@@ -109,6 +171,8 @@ Parameters:
 - "Create a K8s infrastructure for prod" - KubernetesDirect with prod namespace
 - "Set up GKE infrastructure" - KubernetesGcp with GCP connector
 - "Create ECS Fargate infrastructure" - ECS type with AWS connector
+- "Create Azure Web App infrastructure" - AzureWebApp type with subscription and resource group
+- "Set up on-prem infrastructure" - Pdc type with host list for SSH deployments
 
 ## Performance Notes
 
@@ -121,3 +185,5 @@ Parameters:
 - `CONNECTOR_NOT_FOUND` - Create the cloud/K8s connector first
 - `ENVIRONMENT_NOT_FOUND` - Create the environment first
 - `releaseName` must be unique per deployment; use `<+INFRA_KEY_SHORT_ID>`
+- `deploymentType` must match the service definition's type (e.g., Kubernetes service needs KubernetesDirect infra)
+- `allowSimultaneousDeployments: false` is the default; set to `true` only if concurrent deploys are safe

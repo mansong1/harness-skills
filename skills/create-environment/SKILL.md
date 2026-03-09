@@ -41,8 +41,11 @@ environment:
       type: String
       value: staging.myapp.com
     - name: replicas
-      type: String
+      type: Number
       value: "2"
+    - name: db_password
+      type: Secret
+      value: <+secrets.getValue("staging_db_password")>
   overrides:
     manifests:
       - manifest:
@@ -97,6 +100,42 @@ environment:
     - name: domain
       type: String
       value: myapp.com
+```
+
+## Service Overrides
+
+Override service-level settings per environment:
+
+```yaml
+serviceOverrides:
+  environmentRef: staging
+  serviceRef: my_service
+  variables:
+    - name: log_level
+      type: String
+      value: debug
+  manifests:
+    - manifest:
+        identifier: values_override
+        type: Values
+        spec:
+          store:
+            type: Github
+            spec:
+              connectorRef: github
+              repoName: config
+              branch: main
+              paths: [values-staging.yaml]
+```
+
+Create or update overrides via MCP:
+```
+Call MCP tool: harness_create
+Parameters:
+  resource_type: "service_override"
+  org_id: "<organization>"
+  project_id: "<project>"
+  body: <service overrides YAML>
 ```
 
 ## Creating via MCP
