@@ -1,6 +1,6 @@
 # Harness Skills
 
-Claude Code skills for the [Harness.io](https://harness.io) CI/CD platform. Generate pipeline YAML, manage resources, debug failures, analyze costs, and more -- all from natural language.
+Claude Code skills for the [Harness.io](https://harness.io) CI/CD platform. Generate pipeline YAML, manage resources, debug failures, analyze costs, create connector and more -- all from natural language.
 
 ## Prerequisites
 
