@@ -47,7 +47,7 @@ Generate Harness v0 Pipeline YAML and optionally push to Harness via MCP.
    - Ticketing → use `JiraCreate` / `ServiceNowCreate` (never `Run: curl`)
    - Use `Run` steps only for custom build/test/lint commands with no native equivalent
    - **Test steps:** Any Run step that runs unit or integration tests must include a `reports` block (e.g. `type: JUnit`, `spec.paths`) so Harness can capture results; see `references/codebase-analysis.md` for framework → report path.
-4. **Generate valid YAML** following the structure below, using the detected build/test/deploy commands. **Validation rules:** (a) Stage names must match `^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$` — use only letters, numbers, spaces, hyphens, underscores, or periods (no commas). (b) Every CI and CD stage must include a `failureStrategies` array (Approval stages do not require one). For CI use `MarkAsFailure` (never `Ignore` — it hides failures); for CD use `StageRollback`.
+4. **Generate valid YAML** following the structure below, using the detected build/test/deploy commands. **Validation rules:** (a) Stage names must match `^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$` — use only letters, numbers, spaces, hyphens, underscores, or periods (no commas). (b) Every CI and CD stage must include a `failureStrategies` array (Approval stages do not require one). For CI use `MarkAsFailed` (never `Ignore` — it hides failures); for CD use `StageRollback`.
 5. **Optionally create via MCP** — First verify the project exists (see "Creating via MCP" section below), then use `harness_create` with resource_type `pipeline` and `body: { yamlPipeline: "<YAML string>" }`
 
 ## Pipeline Structure
@@ -96,7 +96,7 @@ pipeline:
       - onFailure:
           errors: [AllErrors]
           action:
-            type: MarkAsFailure
+            type: MarkAsFailed
 ```
 
 ### CD Stage (type: Deployment)
@@ -161,6 +161,8 @@ pipeline:
 
 ### Run Step
 
+The `reports` block belongs at the **step level** (sibling of `spec`), not inside `spec`. Placing it inside `spec` causes Harness to silently ignore test results.
+
 ```yaml
 - step:
     identifier: run_tests
@@ -173,10 +175,10 @@ pipeline:
         npm test
       envVariables:
         NODE_ENV: test
-      reports:
-        type: JUnit
-        spec:
-          paths: ["junit.xml"]
+    reports:
+      type: JUnit
+      spec:
+        paths: ["junit.xml"]
 ```
 
 ### Build and Push Docker
@@ -408,10 +410,10 @@ pipeline:
                       spec:
                         shell: Bash
                         command: npm test
-                        reports:
-                          type: JUnit
-                          spec:
-                            paths: ["junit.xml"]
+                      reports:
+                        type: JUnit
+                        spec:
+                          paths: ["junit.xml"]
               - step:
                   identifier: docker_push
                   name: Build and Push
@@ -424,7 +426,7 @@ pipeline:
           - onFailure:
               errors: [AllErrors]
               action:
-                type: MarkAsFailure
+                type: MarkAsFailed
 ```
 
 ## Complete CD Example
@@ -578,7 +580,7 @@ Create a pipeline with parallel test stages for unit tests, integration tests, a
 ### YAML Validation Errors
 - **Pipeline/step identifier:** must match `^[a-zA-Z_][0-9a-zA-Z_]{0,127}$` (letters, numbers, underscores only).
 - **Stage name:** must match `^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$` — no commas; use letters, numbers, spaces, hyphens, underscores, or periods (e.g. use "Build Test and Push" not "Build, Test and Push").
-- **Every CI and CD stage** must include a `failureStrategies` array (Approval stages do not require one); omit it and the API returns "failureStrategies: is missing but it is required". For CI use `type: MarkAsFailure`; for CD use `type: StageRollback`.
+- **Every CI and CD stage** must include a `failureStrategies` array (Approval stages do not require one); omit it and the API returns "failureStrategies: is missing but it is required". For CI use `type: MarkAsFailed`; for CD use `type: StageRollback`.
 - Stage type is case-sensitive: `CI`, `Deployment`, `Approval`, `Custom`
 - Every stage must have a `spec` field
 - **Matrix not applied / not visible in UI:** `strategy` must be a sibling of `spec` on the stage, not inside `spec`. Use `strategy.matrix` at the stage level and reference values as `<+stage.matrix.TAG>`.
