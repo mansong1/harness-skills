@@ -1,6 +1,15 @@
 ---
 name: analyze-costs
-description: Analyze cloud costs, find optimization opportunities, and track anomalies using Harness CCM via MCP. Use when user says "cloud costs", "analyze costs", "cost optimization", "reduce spending", "cost report", or asks about cloud bills.
+description: >
+  Analyze cloud costs, find savings opportunities, and track anomalies using Harness CCM via MCP.
+  Use this skill whenever the user asks about cloud costs, AWS/GCP/Azure spending, billing, cost optimization,
+  cost reduction, savings opportunities, reserved instances, commitment coverage, cost anomalies, or budget overruns.
+  Trigger phrases include: "cloud costs", "analyze costs", "cost optimization", "reduce spending",
+  "reduce our AWS spending", "find savings", "cut costs", "lower our bill", "cost report",
+  "why did our bill spike", "cloud bill", "ways to save money", "optimize cloud spend",
+  "top recommendations to reduce", "cost anomaly", "budget exceeded", "how much are we spending",
+  "cloud cost analysis", "rightsizing", "reserved capacity", "commitment analysis",
+  "ways to reduce spending", "save money on cloud".
 metadata:
   author: Harness
   version: 2.0.0
@@ -14,6 +23,16 @@ compatibility: Requires Harness MCP v2 server (harness-mcp-v2)
 Analyze cloud costs and identify savings using Harness Cloud Cost Management (CCM) via MCP.
 
 ## Instructions
+
+### Routing by query intent
+
+Match the user's intent to the right starting point — do not always start from Step 1:
+
+- **"How much are we spending?"** → Start at Step 1 (cost_overview)
+- **"Find ways to save / reduce spending / top recommendations"** → Go directly to Step 5 (cost_recommendation)
+- **"Why did our bill spike?"** → Go directly to Step 6 (cost_anomaly)
+- **"Break down costs by team/service"** → Go directly to Step 2 or Step 3
+- **Full cost report requested** → Execute all steps in order
 
 ### Step 1: Get Cost Overview
 
@@ -162,6 +181,7 @@ Also: `cost_commitment_coverage`, `cost_commitment_utilisation`, `cost_commitmen
 
 - "How much are we spending on cloud?" - Get cost_overview
 - "Find $5,000 in monthly savings" - List cost_recommendations, prioritize by savings
+- "Find the top 3 ways to reduce our AWS spending" - List cost_recommendations
 - "Why did our bill spike last week?" - List cost_anomaly
 - "Break down costs by team" - Get cost_breakdown or cost_perspective
 - "Are we using our reserved instances?" - Get cost_commitment_utilisation
